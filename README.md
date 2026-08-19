@@ -87,20 +87,3 @@ curl -X POST http://localhost:8000/preguntar \
 La respuesta incluye tanto el texto final como la trayectoria de
 herramientas usadas, para poder inspeccionar cómo llegó a esa respuesta.
 
-## Por qué esta arquitectura
-
-- **`config.py`** concentra todo lo que tiene efectos secundarios al
-  importar (clientes de API, carga del índice), para que se ejecute una sola
-  vez al arrancar el proceso.
-- **`tools.py`** no sabe nada de HTTP ni de FastAPI: son funciones puras que
-  reciben argumentos y devuelven texto, fáciles de probar por separado.
-- **`agent.py`** tampoco sabe nada de HTTP: solo orquesta el loop de
-  pregunta → herramientas → respuesta.
-- **`main.py`** es la única capa que conoce FastAPI. Si cambia el framework
-  web, solo se toca este archivo.
-
-Esta separación hace que el RAG (embeddings + búsqueda) sea solo una
-herramienta más entre varias, no el centro de la arquitectura — lo cual
-refleja cómo se usa en la práctica: la mayoría de los agentes reales
-combinan recuperación de documentos con acceso a datos estructurados y
-servicios en tiempo real.
