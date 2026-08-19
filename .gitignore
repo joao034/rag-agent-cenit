@@ -1,0 +1,18 @@
+# Tus llaves NUNCA se suben. Este repo es público.
+.env
+*.env
+!.env.example
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Sistema
+.DS_Store
+Thumbs.db

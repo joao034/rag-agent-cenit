@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agente Instituto Cénit</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 3rem auto;
+         padding: 0 1rem; line-height: 1.6; }
+  h1 { font-size: 1.4rem; margin-bottom: .2rem; }
+  p.sub { opacity: .7; margin-top: 0; }
+  form { display: flex; gap: .5rem; margin: 1.5rem 0; }
+  input { flex: 1; padding: .7rem; font-size: 1rem; border: 1px solid #8888;
+          border-radius: .4rem; background: transparent; color: inherit; }
+  button { padding: .7rem 1.2rem; font-size: 1rem; border: 0; border-radius: .4rem;
+           background: #4f46e5; color: #fff; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: wait; }
+  pre { white-space: pre-wrap; background: #8881; padding: 1rem;
+        border-radius: .4rem; overflow-x: auto; }
+  ol { background: #8881; padding: 1rem 1rem 1rem 2.5rem; border-radius: .4rem; }
+  code { font-size: .85em; }
+  .etiqueta { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em;
+              opacity: .6; margin-top: 1.5rem; }
+</style>
+</head>
+<body>
+  <h1>Agente del Instituto Cénit</h1>
+  <p class="sub">Pregunta por cursos, precios, becas o cupos.</p>
+
+  <form id="formulario">
+    <input id="pregunta" autofocus autocomplete="off"
+           placeholder="¿Cuánto me sale el CNT-204 en línea con beca de egresados?">
+    <button id="boton">Preguntar</button>
+  </form>
+
+  <div id="salida"></div>
+
+<script>
+const formulario = document.getElementById("formulario");
+const entrada = document.getElementById("pregunta");
+const boton = document.getElementById("boton");
+const salida = document.getElementById("salida");
+
+formulario.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  const pregunta = entrada.value.trim();
+  if (!pregunta) return;
+
+  boton.disabled = true;
+  salida.innerHTML = '<p class="etiqueta">Pensando...</p>';
+
+  try {
+    const peticion = await fetch("/preguntar", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({pregunta})
+    });
+    if (!peticion.ok) throw new Error("El servidor respondió " + peticion.status);
+    const datos = await peticion.json();
+
+    const pasos = datos.trayectoria.map(paso =>
+      "<li><code>" + paso.herramienta + "(" +
+      JSON.stringify(paso.argumentos) + ")</code></li>"
+    ).join("");
+
+    salida.innerHTML =
+      '<p class="etiqueta">Respuesta</p><pre>' + datos.respuesta + '</pre>' +
+      '<p class="etiqueta">Trayectoria — ' + datos.trayectoria.length +
+      ' herramienta(s) en ' + datos.vueltas + ' vuelta(s)</p><ol>' + pasos + '</ol>';
+  } catch (error) {
+    salida.innerHTML = '<p class="etiqueta">Error</p><pre>' + error.message + '</pre>';
+  } finally {
+    boton.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
