@@ -31,10 +31,10 @@ DIMENSIONES = 768
 # en ningún documento ("¿tienen convenio con la UNAM?" da 0.714). Ningún umbral las
 # separa bien; preferimos dejarlas pasar y que el modelo, que ve la fuente y el score
 # de cada fragmento, diga que eso no está documentado.
-UMBRAL_SIMILITUD = 0.68
+UMBRAL_SIMILITUD = 0.70
 
 MAX_VUELTAS = 6
-IVA = 0.16
+IVA = 0.15
 
 INSTRUCCIONES = (
     "Eres el asistente del Instituto Cénit. Respondes preguntas sobre cursos, precios, "
